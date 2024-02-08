@@ -1054,19 +1054,19 @@ class PolarBleSdkManager : ObservableObject {
         var result = ""
         switch type {
         case .ecg:
-            result = "TIMESTAMP ECG(microV)\n"
+            result = "TIMESTAMP,ECG(microV)\n"
         case .acc:
-            result = "TIMESTAMP X(mg) Y(mg) Z(mg)\n"
+            result = "TIMESTAMP,X(mg),Y(mg),Z(mg)\n"
         case .ppg:
-            result =  "TIMESTAMP PPG0 PPG1 PPG2 AMBIENT\n"
+            result =  "TIMESTAMP,PPG0,PPG1,PPG2,AMBIENT\n"
         case .ppi:
-            result = "PPI(ms) HR ERROR_ESTIMATE BLOCKER_BIT SKIN_CONTACT_SUPPORT SKIN_CONTACT_STATUS\n"
+            result = "PPI(ms),HR,ERROR_ESTIMATE,BLOCKER_BIT,SKIN_CONTACT_SUPPORT,SKIN_CONTACT_STATUS\n"
         case .gyro:
-            result =  "TIMESTAMP X(deg/sec) Y(deg/sec) Z(deg/sec)\n"
+            result =  "TIMESTAMP,X(deg/sec),Y(deg/sec),Z(deg/sec)\n"
         case .magnetometer:
-            result =  "TIMESTAMP X(Gauss) Y(Gauss) Z(Gauss)\n"
+            result =  "TIMESTAMP,X(Gauss),Y(Gauss),Z(Gauss)\n"
         case .hr:
-            result = "HR CONTACT_SUPPORTED CONTACT_STATUS RR_AVAILABLE RR(ms)\n"
+            result = "HR,CONTACT_SUPPORTED,CONTACT_STATUS,RR_AVAILABLE,RR(ms)\n"
         }
         return result
     }
@@ -1075,22 +1075,22 @@ class PolarBleSdkManager : ObservableObject {
         var result = ""
         switch data {
         case let polarAccData as PolarAccData:
-            result += polarAccData.samples.map{ "\($0.timeStamp) \($0.x) \($0.y) \($0.z)" }.joined(separator: "\n")
+            result += polarAccData.samples.map{ "\($0.timeStamp),\($0.x),\($0.y),\($0.z)" }.joined(separator: "\n")
         case let polarEcgData as PolarEcgData:
-            result +=  polarEcgData.samples.map{ "\($0.timeStamp) \($0.voltage)" }.joined(separator: "\n")
+            result +=  polarEcgData.samples.map{ "\($0.timeStamp),\($0.voltage)" }.joined(separator: "\n")
         case let polarGyroData as PolarGyroData:
-            result +=  polarGyroData.samples.map{ "\($0.timeStamp) \($0.x) \($0.y) \($0.z)" }.joined(separator: "\n")
+            result +=  polarGyroData.samples.map{ "\($0.timeStamp),\($0.x),\($0.y),\($0.z)" }.joined(separator: "\n")
         case let polarMagnetometerData as PolarMagnetometerData:
-            result +=  polarMagnetometerData.samples.map{ "\($0.timeStamp) \($0.x) \($0.y) \($0.z)" }.joined(separator: "\n")
+            result +=  polarMagnetometerData.samples.map{ "\($0.timeStamp),\($0.x),\($0.y),\($0.z)" }.joined(separator: "\n")
         case let polarPpgData as PolarPpgData:
             if polarPpgData.type == PpgDataType.ppg3_ambient1 {
-                result += polarPpgData.samples.map{ "\($0.timeStamp) \($0.channelSamples[0]) \($0.channelSamples[1]) \($0.channelSamples[2]) \($0.channelSamples[3])" }.joined(separator: "\n")
+                result += polarPpgData.samples.map{ "\($0.timeStamp),\($0.channelSamples[0]),\($0.channelSamples[1]),\($0.channelSamples[2]),\($0.channelSamples[3])" }.joined(separator: "\n")
             }
         case let polarPpiData as PolarPpiData:
-            result += polarPpiData.samples.map{ "\($0.ppInMs) \($0.hr) \($0.ppErrorEstimate) \($0.blockerBit) \($0.skinContactSupported) \($0.skinContactStatus)" }.joined(separator: "\n")
+            result += polarPpiData.samples.map{ "\($0.ppInMs),\($0.hr),\($0.ppErrorEstimate),\($0.blockerBit),\($0.skinContactSupported),\($0.skinContactStatus)" }.joined(separator: "\n")
             
         case let polarHrData as PolarHrData:
-            result += polarHrData.map{ "\($0.hr) \($0.contactStatusSupported) \($0.contactStatus) \($0.rrAvailable) \($0.rrsMs.map { String($0) }.joined(separator: " "))" }.joined(separator: "\n")
+            result += polarHrData.map{ "\($0.hr),\($0.contactStatusSupported),\($0.contactStatus),\($0.rrAvailable),\($0.rrsMs.map { String($0) }.joined(separator: " "))" }.joined(separator: "\n")
             
         default:
             result = "Data type not supported"
@@ -1110,7 +1110,7 @@ class PolarBleSdkManager : ObservableObject {
             let currentDate = Date()
             let dateString = dateFormatter.string(from: currentDate)
             
-            let fileName = type.stringValue + "_" + dateString + ".txt"
+            let fileName = type.stringValue + "_" + dateString + ".csv"
             let fileURL = documentsDirectory.appendingPathComponent(fileName)
             
             do {
